@@ -2,6 +2,7 @@ module Main where
 
 import Data.List (delete)
 import Data.Set (fromList, toList)
+import System.Environment
 
 data Operator = Divide | Multiply | Add | Subtract deriving (Eq, Enum, Ord)
 data Expr     = Literal Int | Expr Operator Expr Expr deriving (Eq, Ord)
@@ -60,7 +61,10 @@ solve target xs = (toList . fromList) (combinations xs >>= search)
 
 -- Main
 main :: IO ()
-main = do let values = [75,50,100,9,7,2]
-          let target = 701
-          let solutions = solve target values
-          putStrLn (show solutions)
+main = do values <- getArgs
+          let list = map (read :: String -> Int) values
+          let solutions = case list of
+                            []     -> error "No target or numbers specified"
+                            [x]    -> error "Target specified, but no numbers"
+                            (x:xs) -> solve x xs
+          putStr $ unlines $ map show solutions
