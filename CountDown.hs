@@ -21,7 +21,7 @@ instance Show Expr where
 instance OperatorRules Expr where
   isValid (Expr Divide x y)             = eval y > 1 && rem (eval x) (eval y) == 0
   isValid (Expr Multiply _ (Literal 1)) = False
-  isValid (Expr Subtract x y)           = x /= y
+  isValid (Expr Subtract x y)           = x > y
   isValid _                             = True
 
 -- Evaluate an Expression
