@@ -39,9 +39,9 @@ solve target xs = (toList . fromList) (combinations xs >>= search)
         combinations []      = []
         combinations numbers = map head $ combinations' (map Literal numbers)
           where combinations' :: [Expr] -> [[Expr]]
-                combinations' [] = []
-                combinations' (x:[]) = [[x]]
-                combinations' xs = (concat [ reduce op (pairs xs) | op <- [Divide ..] ]) >>= combinations'
+                combinations' []  = []
+                combinations' [x] = [[x]]
+                combinations' xs  = (concat [ reduce op (pairs xs) | op <- [Divide ..] ]) >>= combinations'
                   where pairs :: [Expr] -> [((Expr, Expr), [Expr])]
                         pairs []     = []
                         pairs [x]    = []
