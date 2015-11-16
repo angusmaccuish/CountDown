@@ -8,7 +8,6 @@ data Expr     = Literal Int | Expr Operator Expr Expr deriving (Eq, Ord)
 
 class OperatorRules a where
   isValid :: a -> Bool
-  largestFirst :: (a,a) -> (a,a)
 
 instance Show Expr where
   show (Literal x)      = show x
@@ -24,7 +23,6 @@ instance OperatorRules Expr where
   isValid (Expr Multiply _ (Literal 1)) = False
   isValid (Expr Subtract x y)           = x /= y
   isValid _                             = True
-  largestFirst (x,y) = if eval x >= eval y then (x,y) else (y,x)
 
 -- Evaluate an Expression
 eval :: Expr -> Int
@@ -33,6 +31,10 @@ eval (Expr Multiply x y) = (eval x) * (eval y)
 eval (Expr Divide x y)   = (eval x) `div` (eval y)
 eval (Expr Add x y)      = (eval x) + (eval y)
 eval (Expr Subtract x y) = (eval x) - (eval y)
+
+-- We always want largest valued operand first - order unimportant for Multiple/Add, but Divide/Subtract requires this
+largestFirst :: (Expr,Expr) -> (Expr,Expr)
+largestFirst (x,y) = if x >= y then (x,y) else (y,x)
 
 -- Find solution(s) - get all valid combinations of literals and operators and search for target
 solve :: Int -> [Int] -> [Expr]
@@ -49,10 +51,10 @@ combinations numbers = map head $ combinations' (map Literal numbers)
   where combinations' :: [Expr] -> [[Expr]]
         combinations' [] = []
         combinations' (x:[]) = [[x]]
-        combinations' xs = (concat $ [ filter (not . null) $ map (reduce op) (pairs xs) | op <- [Divide ..] ]) >>= combinations'
+        combinations' xs = (concat [filter (not . null) $ map (reduce op) (pairs xs) | op <- [Divide ..]]) >>= combinations'
           where pairs :: [Expr] -> [((Expr, Expr), [Expr])]
-                pairs [] = []
-                pairs [x] = []
+                pairs []     = []
+                pairs [x]    = []
                 pairs (y:ys) = [(largestFirst (y,z), (delete y . delete z) xs) | z <- ys] ++ pairs ys
                 reduce :: Operator -> ((Expr,Expr), [Expr]) -> [Expr]
                 reduce op ((x,y), remaining) = if isValid e then e:remaining else []
@@ -60,7 +62,7 @@ combinations numbers = map head $ combinations' (map Literal numbers)
 
 -- Main
 main :: IO ()
-main = do let values = [25,100,10,8,3,5]
-          let target = 954
+main = do let values = [75,50,100,9,7,2]
+          let target = 701
           let solutions = solve target values
           putStrLn (show solutions)
