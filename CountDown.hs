@@ -2,7 +2,7 @@ module Main where
 
 import Data.List (delete)
 import Data.Set (fromList, toList)
-import System.Environment
+import System.Environment (getArgs)
 
 data Operator = Divide | Multiply | Add | Subtract deriving (Eq, Enum, Ord)
 data Expr     = Literal Int | Expr Operator Expr Expr deriving (Eq, Ord)
