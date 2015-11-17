@@ -44,7 +44,7 @@ solve target xs = (toList . fromList) (combinations xs >>= search)
                         pairs []     = []
                         pairs [x]    = []
                         pairs (y:ys) = [ (largestFirst y z, (delete y . delete z) xs) | z <- ys ] ++ pairs ys
-                        largestFirst x y = if x >= y then (x,y) else (y,x)
+                        largestFirst x y = if eval x >= eval y then (x,y) else (y,x)
                         reduce op = filter (not . null) . map (reduce' op)
                           where reduce' :: Operator -> ((Expr,Expr), [Expr]) -> [Expr]
                                 reduce' op ((x,y), remaining) = if isValid e then e:remaining else []
