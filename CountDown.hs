@@ -38,7 +38,7 @@ solve :: Int -> [Int] -> [Expr]
 solve target xs = (toList . fromList) (combinations xs >>= search)
   where combinations :: [Int] -> [Expr]
         combinations []      = []
-        combinations numbers = map head $ combinations' (map Literal numbers)
+        combinations numbers = concat $ combinations' (map Literal numbers)
           where combinations' :: [Expr] -> [[Expr]]
                 combinations' []  = []
                 combinations' [x] = [[x]]
