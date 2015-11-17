@@ -11,10 +11,10 @@ instance Show Expr where
   show (Literal x)      = show x
   show (Expr op x y)    = "(" ++ show x ++ operator ++ show y ++ ")" 
     where operator = case op of
-                       Divide   -> " / "
-                       Multiply -> " * "
-                       Add      -> " + "
-                       Subtract -> " - "
+                       Divide   -> "/"
+                       Multiply -> "*"
+                       Add      -> "+"
+                       Subtract -> "-"
 
 -- Evaluate an Expression
 eval :: Expr -> Int
