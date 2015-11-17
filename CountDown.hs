@@ -37,7 +37,6 @@ eval (Expr Subtract x y) = (eval x) - (eval y)
 solve :: Int -> [Int] -> [Expr]
 solve target xs = (toList . fromList) (combinations xs >>= search)
   where combinations :: [Int] -> [Expr]
-        combinations []      = []
         combinations numbers = (concat . combinations') (map Literal numbers)
           where combinations' :: [Expr] -> [[Expr]]
                 combinations' []  = []
