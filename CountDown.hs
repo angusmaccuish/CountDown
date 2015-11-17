@@ -7,9 +7,6 @@ import System.Environment (getArgs)
 data Operator = Divide | Multiply | Add | Subtract deriving (Eq, Enum, Ord)
 data Expr     = Literal Int | Expr Operator Expr Expr deriving (Eq, Ord)
 
-class OperatorRules a where
-  isValid :: a -> Bool
-
 instance Show Expr where
   show (Literal x)      = show x
   show (Expr op x y)    = "(" ++ show x ++ operator ++ show y ++ ")" 
@@ -19,12 +16,6 @@ instance Show Expr where
                        Add      -> " + "
                        Subtract -> " - "
 
-instance OperatorRules Expr where
-  isValid (Expr Divide x y)             = eval y > 1 && rem (eval x) (eval y) == 0
-  isValid (Expr Multiply _ (Literal 1)) = False
-  isValid (Expr Subtract x y)           = x > y
-  isValid _                             = True
-
 -- Evaluate an Expression
 eval :: Expr -> Int
 eval (Literal x)         = x
@@ -32,6 +23,13 @@ eval (Expr Multiply x y) = (eval x) * (eval y)
 eval (Expr Divide x y)   = (eval x) `div` (eval y)
 eval (Expr Add x y)      = (eval x) + (eval y)
 eval (Expr Subtract x y) = (eval x) - (eval y)
+
+-- Expression rule
+isValid :: Expr -> Bool
+isValid (Expr Divide x y)             = eval y > 1 && rem (eval x) (eval y) == 0
+isValid (Expr Multiply _ (Literal 1)) = False
+isValid (Expr Subtract x y)           = x > y
+isValid _                             = True
 
 -- Find solution(s) - get all valid combinations of literals and operators and search for target
 solve :: Int -> [Int] -> [Expr]
@@ -56,7 +54,6 @@ solve target xs = (toList . fromList) (combinations xs >>= search)
         search e = (if eval e == target then [e] else []) ++ case e of
           Expr _ x y -> search x ++ search y
           Literal _  -> []
-
 
 -- Main
 main :: IO ()
